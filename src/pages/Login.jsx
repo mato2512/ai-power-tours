@@ -52,7 +52,7 @@ export default function LoginPage() {
     try {
       if (isLogin) {
         // Login
-        const response = await fetch('http://localhost:5000/api/auth/login', {
+        const response = await fetch(`${import.meta.env.VITE_API_URL || 'https://ai-power-tours-production.up.railway.app/api'}/auth/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -73,7 +73,7 @@ export default function LoginPage() {
         setTimeout(() => navigate(createPageUrl("Home")), 1000);
       } else {
         // Register
-        const response = await fetch('http://localhost:5000/api/auth/register', {
+        const response = await fetch(`${import.meta.env.VITE_API_URL || 'https://ai-power-tours-production.up.railway.app/api'}/auth/register`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -104,7 +104,7 @@ export default function LoginPage() {
   const handleGoogleLogin = () => {
     // Save current path to redirect back after login
     localStorage.setItem('returnPath', createPageUrl("Home"));
-    window.location.href = 'http://localhost:5000/api/auth/google';
+    window.location.href = `${import.meta.env.VITE_API_URL || 'https://ai-power-tours-production.up.railway.app/api'}/auth/google`;
   };
 
   return (

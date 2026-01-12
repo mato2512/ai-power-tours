@@ -62,7 +62,7 @@ export default function HotelsPage() {
     
     setSearchingRealTime(true);
     try {
-      console.log('📡 Calling API:', `http://localhost:5000/api/search/hotels?city=${searchTerm}`);
+      console.log('📡 Calling API:', `${import.meta.env.VITE_API_URL || 'https://ai-power-tours-production.up.railway.app/api'}/search/hotels?city=${searchTerm}`);
       const result = await apiClient.search.hotels(searchTerm);
       console.log('📦 Raw API response:', result);
       console.log('✅ Success:', result.success);
