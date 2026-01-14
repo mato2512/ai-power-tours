@@ -1,61 +1,59 @@
-import nodemailer from 'nodemailer';
+import { google } from 'googleapis';
 
-// Email configuration based on environment variables
-const getEmailConfig = () => {
-  const service = process.env.EMAIL_SERVICE || 'development';
+// Gmail API OAuth2 setup
+const getGmailClient = () => {
+  const oauth2Client = new google.auth.OAuth2(
+    process.env.GMAIL_CLIENT_ID,
+    process.env.GMAIL_CLIENT_SECRET,
+    'https://developers.google.com/oauthplayground'
+  );
 
-  if (service === 'gmail') {
-    // Gmail SMTP configuration
-    return {
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASSWORD
-      }
-    };
-  } else if (service === 'sendgrid') {
-    // SendGrid SMTP configuration
-    return {
-      host: 'smtp.sendgrid.net',
-      port: 587,
-      secure: false,
-      auth: {
-        user: 'apikey',
-        pass: process.env.SENDGRID_API_KEY
-      }
-    };
-  } else if (service === 'smtp') {
-    // Custom SMTP configuration
-    return {
-      host: process.env.SMTP_HOST,
-      port: parseInt(process.env.SMTP_PORT || '587'),
-      secure: process.env.SMTP_SECURE === 'true',
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASSWORD
-      }
-    };
-  } else {
-    // Development mode - log to console
-    return null;
-  }
+  oauth2Client.setCredentials({
+    refresh_token: process.env.GMAIL_REFRESH_TOKEN
+  });
+
+  return google.gmail({ version: 'v1', auth: oauth2Client });
 };
 
-// Create transporter
-let transporter = null;
-
-const getTransporter = () => {
-  if (transporter) return transporter;
-
-  const config = getEmailConfig();
+// Create email in RFC 2822 format
+const createEmail = ({ to, subject, html, text }) => {
+  const emailFrom = process.env.EMAIL_FROM || process.env.EMAIL_USER;
   
-  if (!config) {
-    // Development mode - create test account
-    return null;
-  }
+  const messageParts = [
+    `From: ${emailFrom}`,
+    `To: ${to}`,
+    `Subject: ${subject}`,
+    'MIME-Version: 1.0',
+    'Content-Type: text/html; charset=utf-8',
+    '',
+    html
+  ];
+  
+  const message = messageParts.join('\n');
+  
+  // Encode to base64url
+  const encodedMessage = Buffer.from(message)
+    .toString('base64')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
+  
+  return encodedMessage;
+};
 
-  transporter = nodemailer.createTransport(config);
-  return transporter;
+// Send email using Gmail API (HTTP-based, works on Railway)
+const sendWithGmailAPI = async ({ to, subject, html, text }) => {
+  const gmail = getGmailClient();
+  const encodedMessage = createEmail({ to, subject, html, text });
+
+  const response = await gmail.users.messages.send({
+    userId: 'me',
+    requestBody: {
+      raw: encodedMessage
+    }
+  });
+
+  return { success: true, messageId: response.data.id };
 };
 
 // Send email function
@@ -73,25 +71,14 @@ export const sendEmail = async ({ to, subject, html, text }) => {
       return { success: true, messageId: 'dev-' + Date.now() };
     }
 
-    // Production mode - send real email
-    const transport = getTransporter();
-    
-    if (!transport) {
-      throw new Error('Email transporter not configured');
+    // Use Gmail API with OAuth2 (HTTP-based, works on Railway)
+    if (emailService === 'gmail') {
+      return await sendWithGmailAPI({ to, subject, html, text });
     }
 
-    const mailOptions = {
-      from: process.env.EMAIL_FROM || 'AI Power Tours <noreply@aipowertours.com>',
-      to,
-      subject,
-      html,
-      text: text || html.replace(/<[^>]*>/g, '') // Strip HTML for text version
-    };
-
-    const info = await transport.sendMail(mailOptions);
-    
-    return { success: true, messageId: info.messageId };
+    throw new Error('Email service not configured. Set EMAIL_SERVICE=gmail');
   } catch (error) {
+    console.error('Email sending failed:', error);
     throw error;
   }
 };
