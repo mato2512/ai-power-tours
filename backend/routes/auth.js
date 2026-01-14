@@ -3,7 +3,7 @@ import passport from 'passport';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import User from '../models/User.js';
-import { sendPasswordResetEmail, sendWelcomeEmail } from '../services/emailService.js';
+import { sendPasswordResetEmail, sendPasswordResetSuccessEmail, sendWelcomeEmail } from '../services/emailService.js';
 
 const router = express.Router();
 
@@ -327,6 +327,14 @@ router.post('/reset-password', async (req, res) => {
     user.resetPasswordToken = undefined;
     user.resetPasswordExpires = undefined;
     await user.save();
+
+    // Send password reset success email
+    try {
+      await sendPasswordResetSuccessEmail(user.email, user.name);
+    } catch (emailError) {
+      console.error('Failed to send password reset success email:', emailError);
+      // Don't fail the request if email fails
+    }
 
     res.json({ message: 'Password reset successful. You can now login with your email and password!' });
   } catch (error) {

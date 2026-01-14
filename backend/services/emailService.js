@@ -309,9 +309,87 @@ export const sendBookingConfirmationEmail = async (email, userName, bookingDetai
   return sendEmail({ to: email, subject, html });
 };
 
+// Send password reset success email
+export const sendPasswordResetSuccessEmail = async (email, userName) => {
+  const loginUrl = `${process.env.FRONTEND_URL}/Login`;
+  
+  const subject = 'Password Reset Successful - AI Power Tours';
+  
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+        .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
+        .button { display: inline-block; padding: 15px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 5px; font-weight: bold; margin: 20px 0; }
+        .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
+        .success-box { background: #dcfce7; border-left: 4px solid #22c55e; padding: 15px; margin: 20px 0; }
+        .warning-box { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>✅ Password Reset Successful!</h1>
+        </div>
+        <div class="content">
+          <p>Hi ${userName || 'there'},</p>
+          
+          <div class="success-box">
+            <strong>🎉 Great news!</strong>
+            <p>Your password has been successfully reset for your AI Power Tours account.</p>
+          </div>
+          
+          <p>You can now log in with your new password.</p>
+          
+          <div style="text-align: center;">
+            <a href="${loginUrl}" class="button">Login Now</a>
+          </div>
+          
+          <div class="warning-box">
+            <strong>⚠️ Didn't reset your password?</strong>
+            <p>If you didn't make this change, please contact us immediately at ${process.env.EMAIL_SUPPORT || 'support@aipowertours.com'}</p>
+          </div>
+          
+          <p>Best regards,<br><strong>AI Power Tours Team</strong></p>
+        </div>
+        <div class="footer">
+          <p>© ${new Date().getFullYear()} AI Power Tours. All rights reserved.</p>
+          <p>This is an automated email, please do not reply.</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  const text = `
+Password Reset Successful - AI Power Tours
+
+Hi ${userName || 'there'},
+
+Great news! Your password has been successfully reset for your AI Power Tours account.
+
+You can now log in with your new password: ${loginUrl}
+
+Didn't reset your password?
+If you didn't make this change, please contact us immediately at ${process.env.EMAIL_SUPPORT || 'support@aipowertours.com'}
+
+Best regards,
+AI Power Tours Team
+
+© ${new Date().getFullYear()} AI Power Tours. All rights reserved.
+  `;
+
+  return sendEmail({ to: email, subject, html, text });
+};
+
 export default {
   sendEmail,
   sendPasswordResetEmail,
+  sendPasswordResetSuccessEmail,
   sendWelcomeEmail,
   sendBookingConfirmationEmail
 };
