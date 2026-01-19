@@ -75,7 +75,7 @@ AI Power Tours is a modern travel booking platform that combines AI-powered trip
 
 ```bash
 # Clone repository
-git clone https://github.com/mato2512/ai-power-tours.git
+git clone https://github.com/prasadnavale/ai-power-tours.git
 cd ai-power-tours
 
 # Install dependencies
@@ -106,10 +106,7 @@ cd backend && npm run seed && cd ..
 
 ## 📚 Documentation
 
-- **[Installation Guide](INSTALLATION.md)** - Detailed setup instructions
 - **[Architecture](ARCHITECTURE.md)** - System design and structure
-- **[Gmail Setup](GMAIL_SETUP_STEPS.md)** - Email configuration guide
-- **[Email Setup](EMAIL_SETUP_GUIDE.md)** - Complete email service setup
 
 ### Configuration
 
@@ -202,7 +199,7 @@ This project is licensed under the MIT License - see [LICENSE](LICENSE) file.
 
 ## 👥 Authors
 
-**Mato2512** - [GitHub](https://github.com/mato2512)
+**Prasad Navale** - [GitHub](https://github.com/prasadnavale) | [LinkedIn](https://linkedin.com/in/prasadnavale) | [Portfolio](https://ngts.tech)
 
 ---
 
@@ -217,8 +214,8 @@ This project is licensed under the MIT License - see [LICENSE](LICENSE) file.
 
 ## 📞 Support
 
-- Issues: [GitHub Issues](https://github.com/mato2512/ai-power-tours/issues)
-- Discussions: [GitHub Discussions](https://github.com/mato2512/ai-power-tours/discussions)
+- Email: navaleprasad15@gmail.com
+- Portfolio: [ngts.tech](https://ngts.tech)
 
 ---
 
@@ -235,10 +232,7 @@ This project is licensed under the MIT License - see [LICENSE](LICENSE) file.
 
 <div align="center">
 
-**Made with ❤️ by the AI Power Tours Team**
-
-[![GitHub Stars](https://img.shields.io/github/stars/mato2512/ai-power-tours?style=social)](https://github.com/mato2512/ai-power-tours/stargazers)
-[![GitHub Forks](https://img.shields.io/github/forks/mato2512/ai-power-tours?style=social)](https://github.com/mato2512/ai-power-tours/network/members)
+**Made with ❤️ by Prasad Navale**
 
 [⬆ Back to Top](#-ai-power-tours---intelligent-travel-booking-platform)
 
